@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 /**
- * @author yejunxi 2022/09/23
+ * @author plc 2022/09/23
  */
 @Lazy
 @Configuration(

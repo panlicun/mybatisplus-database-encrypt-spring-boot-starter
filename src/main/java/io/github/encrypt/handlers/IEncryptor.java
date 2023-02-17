@@ -1,7 +1,7 @@
 package io.github.encrypt.handlers;
 
 /**
- * @author yejunxi 2022/09/23
+ * @author plc 2022/09/23
  */
 public interface IEncryptor {
 

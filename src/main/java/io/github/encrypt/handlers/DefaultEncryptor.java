@@ -6,7 +6,7 @@ import org.springframework.util.StringUtils;
 /**
  * 默认加密实现
  *
- * @author yejunxi 2022/09/23
+ * @author plc 2022/09/23
  */
 public class DefaultEncryptor implements IEncryptor {
 

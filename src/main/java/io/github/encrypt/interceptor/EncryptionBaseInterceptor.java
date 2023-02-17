@@ -12,7 +12,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import java.lang.reflect.Field;
 
 /**
- * @author yejunxi 2022/09/23
+ * @author plc 2022/09/23
  */
 public class EncryptionBaseInterceptor {
 
