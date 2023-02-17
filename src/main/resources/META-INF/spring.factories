@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.github.panlicun.encrypt.config.EncryptAutoConfiguration,\
+  io.github.panlicun.encrypt.config.EncryptProp
