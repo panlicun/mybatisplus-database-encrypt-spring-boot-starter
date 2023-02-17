@@ -1,11 +1,11 @@
-package io.github.panlicun.encrypt.interceptor;
+package io.github.encrypt.interceptor;
 
 
 import cn.hutool.core.util.StrUtil;
-import io.github.panlicun.encrypt.annotation.FieldEncrypt;
-import io.github.panlicun.encrypt.bean.Encrypted;
-import io.github.panlicun.encrypt.config.EncryptProp;
-import io.github.panlicun.encrypt.handlers.IEncryptor;
+import io.github.encrypt.annotation.FieldEncrypt;
+import io.github.encrypt.config.EncryptProp;
+import io.github.encrypt.handlers.IEncryptor;
+import io.github.encrypt.bean.Encrypted;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 

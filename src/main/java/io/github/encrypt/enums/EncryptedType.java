@@ -1,4 +1,4 @@
-package io.github.panlicun.encrypt.enums;
+package io.github.encrypt.enums;
 
 /**
  * 加密类型

@@ -1,4 +1,4 @@
-package io.github.panlicun.encrypt.interceptor;
+package io.github.encrypt.interceptor;
 
 
 import cn.hutool.core.collection.CollUtil;
@@ -10,10 +10,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
-import io.github.panlicun.encrypt.annotation.FieldEncrypt;
-import io.github.panlicun.encrypt.bean.Encrypted;
-import io.github.panlicun.encrypt.config.EncryptProp;
-import io.github.panlicun.encrypt.handlers.IEncryptor;
+import io.github.encrypt.annotation.FieldEncrypt;
+import io.github.encrypt.config.EncryptProp;
+import io.github.encrypt.handlers.IEncryptor;
+import io.github.encrypt.bean.Encrypted;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -59,7 +59,7 @@ public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implem
      */
     private static final Map<String, List<String>> MAPPED_METHOD_CACHE = new ConcurrentHashMap<>();
 
-    public EncryptionQueryInterceptor(EncryptProp encryptProp,IEncryptor encryptor) {
+    public EncryptionQueryInterceptor(EncryptProp encryptProp, IEncryptor encryptor) {
         super(encryptProp,encryptor);
     }
 

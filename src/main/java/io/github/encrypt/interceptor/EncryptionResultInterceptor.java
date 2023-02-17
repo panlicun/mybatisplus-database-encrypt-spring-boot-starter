@@ -1,9 +1,9 @@
-package io.github.panlicun.encrypt.interceptor;
+package io.github.encrypt.interceptor;
 
 import cn.hutool.core.collection.CollUtil;
-import io.github.panlicun.encrypt.bean.Encrypted;
-import io.github.panlicun.encrypt.config.EncryptProp;
-import io.github.panlicun.encrypt.handlers.IEncryptor;
+import io.github.encrypt.config.EncryptProp;
+import io.github.encrypt.handlers.IEncryptor;
+import io.github.encrypt.bean.Encrypted;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class EncryptionResultInterceptor extends EncryptionBaseInterceptor implements Interceptor {
 
 
-    public EncryptionResultInterceptor(EncryptProp encryptProp,IEncryptor encryptor) {
+    public EncryptionResultInterceptor(EncryptProp encryptProp, IEncryptor encryptor) {
         super(encryptProp,encryptor);
     }
 

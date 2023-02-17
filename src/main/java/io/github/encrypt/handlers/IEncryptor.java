@@ -1,4 +1,4 @@
-package io.github.panlicun.encrypt.handlers;
+package io.github.encrypt.handlers;
 
 /**
  * @author yejunxi 2022/09/23

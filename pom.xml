@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.panlicun</groupId>
-    <artifactId>mybatis-plus-encrypt</artifactId>
-    <version>1.0.2</version>
+    <artifactId>mybatisplus-database-encrypt-spring-boot-starter</artifactId>
+    <version>1.0.0</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -16,7 +16,7 @@
 
     <name>mybatis-plus-encrypt</name>
     <!-- FIXME change it to the project's website -->
-    <url>https://github.com/panlicun/mybatis-plus-encrypt</url>
+    <url>https://github.com/panlicun/mybatisplus-database-encrypt-spring-boot-starter</url>
 
     <licenses>
         <license>
@@ -30,14 +30,14 @@
             <name>panlicun</name>
             <email>63105408@qq.com</email>
             <organization>panlicun</organization>
-            <url>https://github.com/panlicun/mybatis-plus-encrypt</url>
+            <url>https://github.com/panlicun/mybatisplus-database-encrypt-spring-boot-starter</url>
         </developer>
     </developers>
 
     <scm>
-        <connection>https://github.com/panlicun/mybatis-plus-encrypt.git</connection>
-        <developerConnection>scm:git:https://github.com/panlicun/mybatis-plus-encrypty</developerConnection>
-        <url>https://github.com/panlicun/mybatis-plus-encrypt</url>
+        <connection>https://github.com/panlicun/mybatisplus-database-encrypt-spring-boot-starter.git</connection>
+        <developerConnection>scm:git:https://github.com/panlicun/mybatisplus-database-encrypt-spring-boot-starter</developerConnection>
+        <url>https://github.com/panlicun/mybatisplus-database-encrypt-spring-boot-starter</url>
         <tag>master</tag>
     </scm>
 

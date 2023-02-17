@@ -1,4 +1,4 @@
-package io.github.panlicun.encrypt.handlers;
+package io.github.encrypt.handlers;
 
 import cn.hutool.crypto.SecureUtil;
 import org.springframework.util.StringUtils;

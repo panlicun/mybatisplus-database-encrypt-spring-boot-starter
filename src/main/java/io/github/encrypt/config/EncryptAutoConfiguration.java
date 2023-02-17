@@ -1,12 +1,12 @@
-package io.github.panlicun.encrypt.config;
+package io.github.encrypt.config;
 
-import io.github.panlicun.encrypt.enums.EncryptedType;
-import io.github.panlicun.encrypt.handlers.DefaultEncryptor;
-import io.github.panlicun.encrypt.handlers.IEncryptor;
-import io.github.panlicun.encrypt.handlers.SM4Encryptor;
-import io.github.panlicun.encrypt.interceptor.EncryptionQueryInterceptor;
-import io.github.panlicun.encrypt.interceptor.EncryptionResultInterceptor;
-import io.github.panlicun.encrypt.interceptor.EncryptionSaveInterceptor;
+import io.github.encrypt.enums.EncryptedType;
+import io.github.encrypt.handlers.DefaultEncryptor;
+import io.github.encrypt.handlers.IEncryptor;
+import io.github.encrypt.handlers.SM4Encryptor;
+import io.github.encrypt.interceptor.EncryptionQueryInterceptor;
+import io.github.encrypt.interceptor.EncryptionResultInterceptor;
+import io.github.encrypt.interceptor.EncryptionSaveInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
