@@ -14,7 +14,7 @@
         <version>7</version>
     </parent>
 
-    <name>mybatis-plus-encrypt</name>
+    <name>mybatisplus-database-encrypt-spring-boot-starter</name>
     <!-- FIXME change it to the project's website -->
     <url>https://github.com/panlicun/mybatisplus-database-encrypt-spring-boot-starter</url>
 
