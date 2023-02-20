@@ -19,15 +19,16 @@ public class SM4Encryptor implements IEncryptor {
         }
     }
 
-    SymmetricCrypto sm4 = SmUtil.sm4(key.getBytes(StandardCharsets.UTF_8));
 
     @Override
     public String encrypt(String str) {
+        SymmetricCrypto sm4 = new SymmetricCrypto("SM4/ECB/PKCS5Padding",key.getBytes());
         return sm4.encryptHex(str);
     }
 
     @Override
     public String decrypt(String str) {
+        SymmetricCrypto sm4 = new SymmetricCrypto("SM4/ECB/PKCS5Padding",key.getBytes());
         return sm4.decryptStr(str);
     }
 
