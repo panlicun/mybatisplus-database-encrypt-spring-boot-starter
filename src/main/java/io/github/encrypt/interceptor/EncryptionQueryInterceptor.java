@@ -10,10 +10,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.github.encrypt.annotation.FieldEncrypt;
+import io.github.encrypt.bean.Encrypted;
 import io.github.encrypt.config.EncryptProp;
 import io.github.encrypt.handlers.IEncryptor;
-import io.github.encrypt.bean.Encrypted;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -41,7 +42,16 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-
+/**
+ * 查询条件加密拦截器
+ * 场景：getByPhone => where phone = 密文，入参时会将明文转换成密文以匹配条件
+ * 支持查询的方式：
+ * 1. mybatis-plus单表查询：xxService.lambdaQuery().xx 、xxService.query().xx
+ * 2. 原生mybatis mapper 查询，入参为单一对象的方法： User query(xxDTO dto)  入参对象实现Encrypt
+ * 3. 原生mybatis mapper 查询，入参为字符串： User queryByPhone(@Encrypt @Param("phone") String phone)
+ *
+ * @author yejunxi 2022/09/23
+ */
 @Slf4j
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implements Interceptor {
@@ -139,9 +149,15 @@ public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implem
         }
         MapperMethod.ParamMap paramMap = (MapperMethod.ParamMap) parameterObject;
         AbstractWrapper ew = (AbstractWrapper) paramMap.get("ew");
+        if(ew == null){
+            return;
+        }
         MergeSegments expression = ew.getExpression();
         if (expression != null) {
             String whereSql = expression.getSqlSegment();
+            if(StringUtils.isEmpty(whereSql)){
+                return;
+            }
             Map<String, Object> paramNameValuePairs = ew.getParamNameValuePairs();
             Map<String, ColumMapping> columMappingMap = analysisWhereSql(whereSql, paramNameValuePairs);
             for (String encryptField : encryptFields) {
