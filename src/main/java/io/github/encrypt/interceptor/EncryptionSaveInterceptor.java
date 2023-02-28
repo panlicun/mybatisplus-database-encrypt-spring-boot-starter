@@ -1,9 +1,9 @@
 package io.github.encrypt.interceptor;
 
 
+import io.github.encrypt.bean.Encrypted;
 import io.github.encrypt.config.EncryptProp;
 import io.github.encrypt.handlers.IEncryptor;
-import io.github.encrypt.bean.Encrypted;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -12,10 +12,12 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Signature;
 
+import java.util.Map;
+
 /**
  * 保存数据加密库拦截器
  *
- * @author plc 2022/09/23
+ * @author yejunxi 2022/09/23
  */
 @Slf4j
 @Intercepts({
@@ -25,9 +27,8 @@ public class EncryptionSaveInterceptor extends EncryptionBaseInterceptor impleme
 
 
     public EncryptionSaveInterceptor(EncryptProp encryptProp, IEncryptor encryptor) {
-        super(encryptProp,encryptor);
+        super(encryptProp, encryptor);
     }
-
 
 
     @Override
@@ -35,9 +36,19 @@ public class EncryptionSaveInterceptor extends EncryptionBaseInterceptor impleme
         Object[] args = invocation.getArgs();
         MappedStatement mappedStatement = (MappedStatement) args[0];
         Object entity = args[1];
-        if (isInsertOrUpdate(mappedStatement) && entity instanceof Encrypted) {
-            this.encrypt((Encrypted) entity);
+        if(isInsertOrUpdate(mappedStatement)){
+            if (entity instanceof Map) {
+                Map map = (Map) entity;
+                Object et = map.getOrDefault("et", (Object) null);
+                if (et != null) {
+                    this.encrypt((Encrypted) et);
+                }
+            }else{
+                this.encrypt((Encrypted) entity);
+            }
         }
         return invocation.proceed();
+
     }
+
 }
