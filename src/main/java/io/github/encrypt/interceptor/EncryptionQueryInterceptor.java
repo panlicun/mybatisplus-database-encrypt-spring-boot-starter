@@ -42,16 +42,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-/**
- * 查询条件加密拦截器
- * 场景：getByPhone => where phone = 密文，入参时会将明文转换成密文以匹配条件
- * 支持查询的方式：
- * 1. mybatis-plus单表查询：xxService.lambdaQuery().xx 、xxService.query().xx
- * 2. 原生mybatis mapper 查询，入参为单一对象的方法： User query(xxDTO dto)  入参对象实现Encrypt
- * 3. 原生mybatis mapper 查询，入参为字符串： User queryByPhone(@Encrypt @Param("phone") String phone)
- *
- * @author yejunxi 2022/09/23
- */
+
 @Slf4j
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implements Interceptor {
