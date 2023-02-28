@@ -41,10 +41,14 @@ public class EncryptionSaveInterceptor extends EncryptionBaseInterceptor impleme
                 Map map = (Map) entity;
                 Object et = map.getOrDefault("et", (Object) null);
                 if (et != null) {
-                    this.encrypt((Encrypted) et);
+                    if(et instanceof Encrypted){
+                        this.encrypt((Encrypted) et);
+                    }
                 }
             }else{
-                this.encrypt((Encrypted) entity);
+                if(entity instanceof Encrypted){
+                    this.encrypt((Encrypted) entity);
+                }
             }
         }
         return invocation.proceed();
