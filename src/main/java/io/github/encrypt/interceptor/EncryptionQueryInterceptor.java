@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.encrypt.annotation.FieldEncrypt;
 import io.github.encrypt.bean.Encrypted;
 import io.github.encrypt.config.EncryptProp;
@@ -42,7 +43,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-
 @Slf4j
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implements Interceptor {
@@ -61,8 +61,13 @@ public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implem
     private static final Map<String, List<String>> MAPPED_METHOD_CACHE = new ConcurrentHashMap<>();
 
     public EncryptionQueryInterceptor(EncryptProp encryptProp, IEncryptor encryptor) {
-        super(encryptProp,encryptor);
+        super(encryptProp, encryptor);
     }
+
+    /**
+     * 保存分页时，查询总数sql的参数加密的值
+     */
+    private static final Map<String, Map<String,Object>> PAGE_ENCRYPT = new ConcurrentHashMap<>();
 
 
     @Override
@@ -121,13 +126,60 @@ public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implem
      */
     @SneakyThrows
     private void handleMapperParamQuery(MappedStatement mappedStatement, Object parameterObject) {
-        List<String> encryptParamList = getEncryptParamByMethod(mappedStatement);
+        String methodName = mappedStatement.getId();
+        if(methodName.contains("_mpCount")){
+            methodName = methodName.replace("_mpCount","");
+        }
         MapperMethod.ParamMap<Object> paramMap = (MapperMethod.ParamMap) parameterObject;
         for (Map.Entry<String, Object> param : paramMap.entrySet()) {
-            if (encryptParamList.contains(param.getKey()) && param.getValue() != null) {
-                paramMap.put(param.getKey(), this.encrypt(param.getValue().toString()));
+            if (param.getValue() instanceof Encrypted) {
+                if (param.getKey().contains("param")) {
+                    Map<String, Object> params = PAGE_ENCRYPT.get(methodName);
+                    if(params != null){
+                        if(params.get(param.getKey()) != null && !params.get(param.getKey()).equals(new ObjectMapper().writeValueAsString(param.getValue()))){
+                            Encrypted entity = (Encrypted) param.getValue();
+                            this.encrypt(entity);
+                            Map<String,Object> map = new HashMap<>();
+                            map.put(param.getKey(),new ObjectMapper().writeValueAsString(param.getValue()));
+                            PAGE_ENCRYPT.put(methodName,map);
+                        }
+                        PAGE_ENCRYPT.remove(methodName);
+                    }else{
+                        Encrypted entity = (Encrypted) param.getValue();
+                        this.encrypt(entity);
+                        Map<String,Object> map = new HashMap<>();
+                        map.put(param.getKey(),new ObjectMapper().writeValueAsString(param.getValue()));
+                        PAGE_ENCRYPT.put(methodName,map);
+                    }
+                }
+            } else {
+                List<String> encryptParamList = getEncryptParamByMethod(mappedStatement);
+                if (encryptParamList.contains(param.getKey()) && param.getValue() != null) {
+                    Map<String, Object> params = PAGE_ENCRYPT.get(methodName);
+                    if(params != null){
+                        if(params.get(param.getKey()) != null && !params.get(param.getKey()).equals(param.getValue().toString())){
+                            paramMap.put(param.getKey(), this.encrypt(param.getValue().toString()));
+                            Map<String,Object> map = new HashMap<>();
+                            map.put(param.getKey(),param.getValue().toString());
+                            PAGE_ENCRYPT.put(methodName,map);
+                        }
+                        PAGE_ENCRYPT.remove(methodName);
+                    }else{
+                        paramMap.put(param.getKey(), this.encrypt(param.getValue().toString()));
+                        Map<String,Object> map = new HashMap<>();
+                        map.put(param.getKey(),param.getValue().toString());
+                        PAGE_ENCRYPT.put(methodName,map);
+                    }
+                }
             }
         }
+//        List<String> encryptParamList = getEncryptParamByMethod(mappedStatement);
+//        MapperMethod.ParamMap<Object> paramMap = (MapperMethod.ParamMap) parameterObject;
+//        for (Map.Entry<String, Object> param : paramMap.entrySet()) {
+//            if (encryptParamList.contains(param.getKey()) && param.getValue() != null) {
+//                paramMap.put(param.getKey(), this.encrypt(param.getValue().toString()));
+//            }
+//        }
     }
 
     /**
@@ -140,13 +192,14 @@ public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implem
         }
         MapperMethod.ParamMap paramMap = (MapperMethod.ParamMap) parameterObject;
         AbstractWrapper ew = (AbstractWrapper) paramMap.get("ew");
-        if(ew == null){
+        if (ew == null) {
             return;
         }
+        String methodName = mappedStatement.getId();
         MergeSegments expression = ew.getExpression();
         if (expression != null) {
             String whereSql = expression.getSqlSegment();
-            if(StringUtils.isEmpty(whereSql)){
+            if (StringUtils.isEmpty(whereSql)) {
                 return;
             }
             Map<String, Object> paramNameValuePairs = ew.getParamNameValuePairs();
@@ -154,7 +207,24 @@ public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implem
             for (String encryptField : encryptFields) {
                 ColumMapping columMapping = columMappingMap.get(encryptField);
                 if (columMapping != null) {
-                    paramNameValuePairs.put(columMapping.getAliasName(), this.encrypt(columMapping.getVal()));
+                    if(methodName.contains("_mpCount")){
+                        methodName = methodName.replace("_mpCount","");
+                    }
+                    Map<String, Object> params = PAGE_ENCRYPT.get(methodName);
+                    if(params != null){
+                        if(params.get(columMapping.getAliasName()) != null && !params.get(columMapping.getAliasName()).equals(columMapping.getVal())){
+                            paramNameValuePairs.put(columMapping.getAliasName(), this.encrypt(columMapping.getVal()));
+                            Map<String,Object> map = new HashMap<>();
+                            map.put(columMapping.getAliasName(),columMapping.getVal());
+                            PAGE_ENCRYPT.put(methodName,map);
+                        }
+                        PAGE_ENCRYPT.remove(methodName);
+                    }else{
+                        paramNameValuePairs.put(columMapping.getAliasName(), this.encrypt(columMapping.getVal()));
+                        Map<String,Object> map = new HashMap<>();
+                        map.put(columMapping.getAliasName(),this.encrypt(columMapping.getVal()));
+                        PAGE_ENCRYPT.put(methodName,map);
+                    }
                 }
             }
         }
@@ -201,6 +271,9 @@ public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implem
             String[] split = id.split("\\.");
             String methodName = split.length != 0 ? split[split.length - 1] : id;
             Class clazz = getEntityClass(mappedStatement).getKey();
+            if(methodName.contains("_mpCount")){
+                methodName = methodName.replace("_mpCount","");
+            }
             Method method = ReflectUtil.getMethodByName(clazz, methodName);
             list = new ArrayList<>();
             for (Parameter p : method.getParameters()) {
