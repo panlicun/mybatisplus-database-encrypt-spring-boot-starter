@@ -315,7 +315,9 @@ public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implem
                     res.put(pair.getValue(), pair.getKey());
                 }
                 Pair<String, String> pair = getColumnName(expr.getRightExpression());
-                res.put(pair.getValue(), pair.getKey());
+                if(null != pair){
+                    res.put(pair.getValue(), pair.getKey());
+                }
             }
 
             @Override
