@@ -274,12 +274,14 @@ public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implem
             if(methodName.contains("_mpCount")){
                 methodName = methodName.replace("_mpCount","");
             }
-            Method method = ReflectUtil.getMethodByName(clazz, methodName);
+            Method method = getMethodByName(clazz, methodName);
             list = new ArrayList<>();
-            for (Parameter p : method.getParameters()) {
-                if (p.isAnnotationPresent(FieldEncrypt.class) && p.getType() == String.class) {
-                    Param param = p.getAnnotation(Param.class);
-                    list.add(param != null ? param.value() : p.getName());
+            if(method != null){
+                for (Parameter p : method.getParameters()) {
+                    if (p.isAnnotationPresent(FieldEncrypt.class) && p.getType() == String.class) {
+                        Param param = p.getAnnotation(Param.class);
+                        list.add(param != null ? param.value() : p.getName());
+                    }
                 }
             }
             MAPPED_METHOD_CACHE.put(id, list);
@@ -327,6 +329,19 @@ public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implem
             }
         });
         return res;
+    }
+
+    private Method getMethodByName(Class<?> clazz, String methodName){
+        Method[] methods = clazz.getMethods();
+        if(methods == null || methods.length == 0){
+            return null;
+        }
+        for (Method method : methods) {
+            if(method.getName().equals(methodName)){
+                return method;
+            }
+        }
+        return null;
     }
 
 
