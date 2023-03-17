@@ -195,14 +195,24 @@ public class EncryptionQueryInterceptor extends EncryptionBaseInterceptor implem
             }
             Map<String, Object> paramNameValuePairs = ew.getParamNameValuePairs();
             Map<String, ColumMapping> columMappingMap = analysisWhereSql(whereSql, paramNameValuePairs);
-            for (String encryptField : encryptFields) {
-                ColumMapping columMapping = columMappingMap.get(encryptField);
-                if (columMapping != null) {
-                    if (methodName.contains("_mpCount")) {
+            if(!containsPage(paramMap)){
+                for (String encryptField : encryptFields) {
+                    ColumMapping columMapping = columMappingMap.get(encryptField);
+                    if (columMapping != null) {
                         paramNameValuePairs.put(columMapping.getAliasName(), this.encrypt(columMapping.getVal()));
                     }
                 }
+            }else{
+                if (methodName.contains("_mpCount")) {
+                    for (String encryptField : encryptFields) {
+                        ColumMapping columMapping = columMappingMap.get(encryptField);
+                        if (columMapping != null) {
+                            paramNameValuePairs.put(columMapping.getAliasName(), this.encrypt(columMapping.getVal()));
+                        }
+                    }
+                }
             }
+
         }
     }
 
